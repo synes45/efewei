@@ -5,6 +5,14 @@ export const E_FOCUS={x:61.2,y:-36.1,radius:1.9};
 
 // Minimum-jerk easing: both velocity and acceleration settle at the endpoints.
 export function smoothProgress(value){const t=Math.max(0,Math.min(1,value));return t*t*t*(t*(t*6-15)+10);}
+// Critically damped spring (Apple damping 1, response in seconds), solved exactly so a long frame cannot overshoot.
+export const SPRING_RESPONSE=1.6;
+export function springStep(position,velocity,target,dt,response=SPRING_RESPONSE){
+  const omega=2*Math.PI/response,offset=position-target,slope=velocity+omega*offset,decay=Math.exp(-omega*dt);
+  return {position:target+(offset+slope*dt)*decay,velocity:(velocity-omega*slope*dt)*decay};
+}
+// A flick only nudges the spring: px/s per screen height, halved and capped (progress/s).
+export const gestureVelocity=(pixelsPerSecond,height)=>Math.min(1.2,Math.abs(pixelsPerSecond)/Math.max(1,height)*.5);
 const curve=(a,b,c,d,t)=>a*(1-t)**3+3*b*(1-t)**2*t+3*c*(1-t)*t*t+d*t*t*t;
 
 export function portalGeometry(width,height,progress){

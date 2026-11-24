@@ -26,14 +26,18 @@ const shapes={
   }
 };
 
+// Leaves travel from half a wordmark height above the text to half below it (2x height); margin keeps a rotated leaf inside the field.
+const margin=30;
 export default function LeafFall({layer,width=113,height=36}){
+  const travel=height*2,fieldHeight=travel+margin*2;
   const fieldWidth=width+40;
-  return <svg className="leaf-vector-layer" x="-20" y={height/2-56} width={fieldWidth} height="112" viewBox={`0 0 ${fieldWidth} 112`} aria-hidden="true" focusable="false">
+  // HTML boxes (not SVG <g>) so the fall/flutter transforms are composited instead of repainting every frame.
+  return <div className="leaf-vector-layer" style={{left:-20,top:-height/2-margin,width:fieldWidth,height:fieldHeight}} aria-hidden="true">
     {leaves[layer].map((leaf,index)=>{
       const id=`wei-leaf-${layer}-${index}`,shape=shapes[leaf.shape];
-      return <g key={id} transform={`translate(${fieldWidth*leaf.x/100} -20)`}>
-        <g className="leaf-vector-track" style={{
-        '--leaf-duration':`${leaf.duration}s`,'--leaf-delay':`${leaf.delay}s`,
+      return <div key={id} className="leaf-vector-slot" style={{left:fieldWidth*leaf.x/100,top:margin-leaf.size/1.5}}>
+        <div className="leaf-vector-track" style={{
+        '--leaf-duration':`${leaf.duration}s`,'--leaf-delay':`${leaf.delay}s`,'--leaf-travel':`${travel}px`,
         '--leaf-flutter':`${leaf.duration*.62}s`,'--leaf-opacity':leaf.opacity,
         '--leaf-sway':`${-leaf.drift*.4}px`,'--leaf-drift':`${leaf.drift}px`,
         '--leaf-end':`${leaf.drift*.55}px`,
@@ -55,8 +59,8 @@ export default function LeafFall({layer,width=113,height=36}){
             <path d={shape.veins} fill="none" stroke="#d36a46" strokeWidth=".7" opacity=".5" strokeLinecap="round"/>
           </g>
         </svg>
-        </g>
-      </g>;
+        </div>
+      </div>;
     })}
-  </svg>;
+  </div>;
 }

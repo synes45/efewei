@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { E_COUNTER,E_FOCUS,WORD_BOX,portalGeometry,smoothProgress } from '../src/portalMath.js';
+import { E_COUNTER,E_FOCUS,WORD_BOX,gestureVelocity,portalGeometry,smoothProgress,springStep,SPRING_RESPONSE } from '../src/portalMath.js';
 
 const numbers=value=>value.match(/[-+]?(?:\d*\.?\d+)(?:e[-+]?\d+)?/gi).map(Number);
 const close=(a,b)=>assert.ok(Math.abs(a-b)<1e-7,`${a} != ${b}`);
@@ -129,4 +129,34 @@ test('project reveals share the camera timeline and reverse without a timer',()=
     close(portalGeometry(width,height,.2).projectReveal,0);
     close(portalGeometry(width,height,.95).projectReveal,1);
   }
+});
+
+test('the transition spring settles without overshoot and reverses mid-flight without a jump',()=>{
+  const dt=1/60,run=(state,target,frames,check)=>{
+    for(let i=0;i<frames;i++){
+      const next=springStep(state.position,state.velocity,target,dt);
+      assert.ok(Number.isFinite(next.position)&&Number.isFinite(next.velocity));
+      check?.(state,next);state=next;
+    }
+    return state;
+  };
+  const inside=(_,next)=>assert.ok(next.position>=-1e-9&&next.position<=1+1e-9);
+  // Opening from rest: monotonic, within 1% of the target after ~1.05 x response.
+  let state=run({position:0,velocity:0},1,Math.ceil(SPRING_RESPONSE*1.1*60),(previous,next)=>{inside(previous,next);assert.ok(next.position>=previous.position);});
+  assert.ok(state.position>.99);
+  // Reverse after .3s: position and velocity stay continuous, then it settles at 0.
+  state=run({position:0,velocity:gestureVelocity(4000,900)},1,18);
+  const before=state;
+  state=run(state,0,1,(previous,next)=>{
+    assert.ok(Math.abs(next.position-previous.position)<Math.abs(previous.velocity)*dt*1.5);
+    assert.ok(Math.abs(next.velocity-previous.velocity)<2);
+  });
+  assert.ok(state.position>before.position);
+  state=run(state,0,180,inside);
+  assert.ok(Math.abs(state.position)<1e-3&&Math.abs(state.velocity)<1e-2);
+  // Two seconds of dropped frames land on the target instead of exploding.
+  const long=springStep(.4,-3,1,2);
+  assert.ok(Math.abs(long.position-1)<.01&&Number.isFinite(long.velocity));
+  // Gesture seeds are capped and safe for a zero-height viewport.
+  assert.equal(gestureVelocity(1e9,900),1.2);assert.ok(Number.isFinite(gestureVelocity(500,0)));assert.equal(gestureVelocity(0,900),0);
 });

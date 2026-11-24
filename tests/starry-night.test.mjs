@@ -40,7 +40,7 @@ for (const portrait of [false, true]) {
 test('normal rendering uses the liquid shader, not a separate artwork overlay', async () => {
   const main = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8');
   assert.match(main, /lazy\(\(\)=>import\('\.\/LiquidScene\.jsx'\)\)/);
-  assert.match(main, /<LiquidScene reduced=\{reduced\}\/>/);
+  assert.match(main, /<LiquidScene reduced=\{reduced\} theme=\{theme\}\/>/);
   assert.match(main, /<Suspense fallback=\{<StarryNight\/>\}>/);
   assert.doesNotMatch(main, /<\/Suspense>\s*<StarryNight\/>/);
   const scene = await readFile(new URL('../src/LiquidScene.jsx', import.meta.url), 'utf8');
@@ -96,7 +96,10 @@ test('Photoshop-style soft light preserves black instead of adding a gray veil',
   assert.match(liquidGradient, /mix\(low,sqrt\(max\(base,0\.\)\),step\(vec3\(\.25\),base\)\)/);
   assert.doesNotMatch(liquidGradient, /vec3\(max\(relief|color\+vec3\(/);
   const css=await readFile(new URL('../src/starryNight.css', import.meta.url), 'utf8');
-  assert.match(css, /mix-blend-mode:soft-light/);
+  // Dark theme value lives in the :root token block.
+  assert.match(css, /mix-blend-mode:var\(--ink-blend\)/);
+  const tokens=await readFile(new URL('../src/style.css', import.meta.url), 'utf8');
+  assert.match(tokens, /:root\{--bg:#050102;[^}]*--ink-blend:soft-light;/);
 });
 
 test('soft-light ink and its bevel use full strength without the old 35% reduction', async () => {
@@ -104,7 +107,9 @@ test('soft-light ink and its bevel use full strength without the old 35% reducti
   assert.match(liquidGradient, /float ink=.*uInkReady\*inkStrength/);
   assert.match(liquidGradient, /float nearby=.*uInkReady\*inkStrength/);
   const css=await readFile(new URL('../src/starryNight.css', import.meta.url), 'utf8');
-  assert.match(css, /opacity:\.18/);
+  assert.match(css, /opacity:var\(--ink-opacity\)/);
+  const tokens=await readFile(new URL('../src/style.css', import.meta.url), 'utf8');
+  assert.match(tokens, /:root\{--bg:#050102;[^}]*--ink-opacity:\.18;/);
 });
 
 test('liquid spread keeps true black negative space instead of a screen-wide burgundy floor', () => {
@@ -145,10 +150,11 @@ test('parallax reuses the real CSS animation clock and the existing render loop'
 test('the lower edge is dimmed and the loading surface has no red radial glow', async () => {
   assert.match(liquidGradient,/vec3 blended=mix\(surface,softLightWhite\(surface\),inkAmount\)/);
   assert.match(liquidGradient,/lowerVisibility=mix\(\.025,1\.,smoothstep\(\.16,\.48,vUv\.y\)\)/);
-  assert.match(liquidGradient,/fragColor=vec4\(blended\*lowerVisibility,1\.\)/);
+  assert.match(liquidGradient,/vec3 result=blended\*lowerVisibility;/);
   assert.doesNotMatch(liquidGradient,/color\*=mix\(\.32/);
   const css=await readFile(new URL('../src/style.css',import.meta.url),'utf8');
-  assert.match(css,/\.experience\{background:#050102\}/);
+  assert.match(css,/\.experience\{background:var\(--bg\)\}/);
+  assert.match(css,/:root\{--bg:#050102;/);
   assert.match(css,/\.liquid-fallback:after\{opacity:\.08;/);
 });
 

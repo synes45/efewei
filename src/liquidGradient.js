@@ -14,6 +14,7 @@ uniform float uInkReady;
 uniform vec2 uInkScale;
 uniform vec2 uInkCenter;
 uniform vec2 uInkParallax;
+uniform float uTheme;
 in vec2 vUv;
 out vec4 fragColor;
 
@@ -109,6 +110,19 @@ void main(){
   vec3 blended=mix(surface,softLightWhite(surface),inkAmount);
   // Fade the final display color: gamma and Soft Light cannot brighten it again.
   float lowerVisibility=mix(.025,1.,smoothstep(.16,.48,vUv.y));
-  fragColor=vec4(blended*lowerVisibility,1.);
+  vec3 result=blended*lowerVisibility;
+  // Light theme (uTheme 0..1 crossfade): the same field and ink tint warm paper
+  // toward blush, then muted ruby at the peaks. Dark output is untouched at 0.
+  if(uTheme>0.){
+    const vec3 paper=vec3(246.,241.,239.)/255.;
+    float peak=tone/.32;
+    vec3 light=mix(paper,vec3(232.,190.,196.)/255.,smoothstep(0.,.55,peak));
+    light=mix(light,vec3(150.,58.,76.)/255.,smoothstep(.45,1.,peak)*.75);
+    // Ink darkens (multiply-like) instead of lightening; like dark mode, it shows
+    // mostly inside reflections and stays faint on bare paper.
+    light=mix(light,light*vec3(.62,.5,.53),inkAmount*(.3+.5*reflection));
+    result=mix(result,mix(paper,light,lowerVisibility),uTheme);
+  }
+  fragColor=vec4(result,1.);
 }
 `;
