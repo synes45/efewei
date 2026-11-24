@@ -9,9 +9,17 @@
 .motion-scene:not([data-phase=hero]) .word-details{display:none}
 .hero-controls{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0;transition:opacity .25s}
 .motion-scene[data-phase=hero] .hero-controls{opacity:1}
-.hero-bio{position:absolute;left:0;right:0;top:calc(50% + 30px);margin:0;padding:0 16px;color:var(--muted);font-family:var(--font-mono);font-size:11px;line-height:14px;letter-spacing:.6px;text-align:center}
+.hero-bio{position:absolute;left:0;right:0;top:calc(50% + 54px);margin:0;padding:0 16px;color:var(--muted);font-family:var(--font-mono);font-size:11px;line-height:14px;letter-spacing:.6px;text-align:center}
+/* Decode-in: the line fades while each glyph unfolds left to right, then locks from noise. */
+.hero-bio-text{display:inline-block;animation:hero-bio-in .5s ease both}
+.hero-bio-char{display:inline-block;white-space:pre;opacity:.5;transform-origin:0 70%;animation:hero-char-in .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--char-index)*16ms);transition:opacity .16s,color .16s}
+.hero-bio-char.is-locked{opacity:1}
+.hero-bio-char:not(.is-locked){color:var(--cue)}
+@keyframes hero-bio-in{from{opacity:0}to{opacity:1}}
+@keyframes hero-char-in{from{transform:translateY(.35em) rotate(18deg) scale(.9)}to{transform:none}}
+@keyframes cue-in{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
 .screen-reader-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.scene-cue{position:absolute;left:50%;bottom:calc(108px + env(safe-area-inset-bottom,0px));display:grid;place-items:center;width:38px;height:38px;padding:0;border:0;background:transparent;color:var(--cue);transform:translateX(-50%);pointer-events:auto;cursor:pointer;transition:color .2s,transform .1s ease-out;-webkit-tap-highlight-color:transparent}
+.scene-cue{position:absolute;left:50%;bottom:calc(108px + env(safe-area-inset-bottom,0px));display:grid;place-items:center;width:38px;height:38px;padding:0;border:0;background:transparent;color:var(--cue);transform:translateX(-50%);pointer-events:auto;cursor:pointer;transition:color .2s,transform .1s ease-out;-webkit-tap-highlight-color:transparent;animation:cue-in .7s cubic-bezier(.2,.7,.2,1) 1.05s both}
 @media(hover:hover) and (pointer:fine){.scene-cue:hover,.scene-back:hover{color:var(--cue-hover)}}
 .scene-cue:active{transform:translateX(-50%) scale(.94)}.scene-back:active{transform:scale(.94)}
 .scene-cue:focus-visible,.scene-back:focus-visible{outline:1px solid var(--cue-focus);outline-offset:4px;border-radius:50%}
@@ -34,8 +42,8 @@
 .project-row>span{color:var(--project-meta);font-family:var(--font-mono);font-size:10px;letter-spacing:.2px}
 
 .socials{z-index:5;bottom:calc(28px + env(safe-area-inset-bottom,0px))}.audio-player{z-index:5}
-@media(max-width:700px){.hero-bio{top:calc(50% + 24px)}.project-scroll{bottom:calc(160px + env(safe-area-inset-bottom,0px))}.socials{bottom:calc(96px + env(safe-area-inset-bottom,0px))}.scene-cue{bottom:calc(164px + env(safe-area-inset-bottom,0px))}}
-@media(max-width:700px) and (max-height:520px){.hero-bio{top:calc(50% + 18px)}}
+@media(max-width:700px){.hero-bio{top:calc(50% + 46px)}.project-scroll{bottom:calc(160px + env(safe-area-inset-bottom,0px))}.socials{bottom:calc(96px + env(safe-area-inset-bottom,0px))}.scene-cue{bottom:calc(164px + env(safe-area-inset-bottom,0px))}}
+@media(max-width:700px) and (max-height:520px){.hero-bio{top:calc(50% + 38px)}}
 @media(max-width:360px){.projects{width:calc(100% - 36px)}.project-row{min-height:70px;padding:0 18px}}
-@media(prefers-reduced-motion:reduce){.portal-sway,.hero-sway,.project-sway{animation:none}.portal-word,.project-stage{transition:opacity .2s ease,visibility .2s}.scene-cue,.scene-back{transition:color .2s,opacity .1s}.scene-cue:active{transform:translateX(-50%);opacity:.7}.scene-back:active{transform:none;opacity:.7}.motion-scene .projects,.motion-scene .projects-heading,.motion-scene .project-list>li{transform:none}}
+@media(prefers-reduced-motion:reduce){.portal-sway,.hero-sway,.project-sway{animation:none}.hero-bio-text,.hero-bio-char,.scene-cue{animation:none}.portal-word,.project-stage{transition:opacity .2s ease,visibility .2s}.scene-cue,.scene-back{transition:color .2s,opacity .1s}.scene-cue:active{transform:translateX(-50%);opacity:.7}.scene-back:active{transform:none;opacity:.7}.motion-scene .projects,.motion-scene .projects-heading,.motion-scene .project-list>li{transform:none}}
 @media(max-width:420px){.hero-bio{font-size:9.5px;letter-spacing:.2px;white-space:nowrap}}

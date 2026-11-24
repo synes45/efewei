@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ArrowDown } from 'lucide-react';
 import LeafFall from './LeafFall.jsx';
+import HeroBio from './HeroBio.jsx';
 import Projects from './Projects.jsx';
 import WordmarkArt from './WordmarkArt.jsx';
 import { gestureVelocity, portalGeometry, smoothProgress, springStep } from './portalMath.js';
@@ -166,7 +167,7 @@ export default function MotionScene({reduced}){
     </div>
     <header className="hero-controls" inert={phase!=='hero'} aria-hidden={phase!=='hero'}>
       <h1 className="screen-reader-only">wei.</h1>
-      <div className="hero-sway"><p className="hero-bio">Graphic Design · AI Integration · Web Development</p></div>
+      <div className="hero-sway"><HeroBio reduced={reduced}/></div>
       <button ref={cue} type="button" className="scene-cue" aria-label="Projeleri aç" title="Projeleri aç" onClick={()=>navigate(1)}><ArrowDown size={17} strokeWidth={1.2}/></button>
     </header>
   </div>;
