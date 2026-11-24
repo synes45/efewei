@@ -1,0 +1,6 @@
+/* Only used while loading or without WebGL. Normal rendering is a single shader. */
+.starry-night{position:absolute;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.starry-night picture,.starry-night img{display:block;width:100%;height:100%}
+.starry-night img{object-fit:cover;object-position:50% 50%;opacity:.18;mix-blend-mode:soft-light}
+.liquid-scene>.starry-night{z-index:1}
+@media(max-aspect-ratio:3/4){.starry-night img{object-position:40% 50%}}

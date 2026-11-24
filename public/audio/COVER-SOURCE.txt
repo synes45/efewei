@@ -1,0 +1,7 @@
+Track: Yeniden (feat. Nova Norda)
+Artist: BEGE
+Release: Yeniden (feat. Nova Norda) - Single
+Cover source: Apple iTunes Search / Apple Music metadata, track ID 1707021342.
+https://itunes.apple.com/lookup?id=1707021342&country=tr
+Image CDN: https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/3a/35/d6/3a35d63e-fb9a-60b4-4b89-ebcd356e4720/197189886348.jpg/300x300bb.jpg
+Displayed as a small circular music-player thumbnail at the user's request.

@@ -1,0 +1,2 @@
+/* Luminosity grain stays visible on black without introducing a color tint. */
+.site-noise{position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('/textures/noise-v2.svg') repeat;background-size:160px 160px;mix-blend-mode:luminosity;opacity:.065}

@@ -1,0 +1,8 @@
+/* Vector-only leaf planes share the logo camera, rather than a fixed HTML box. */
+.leaf-vector-layer{overflow:hidden;pointer-events:none;animation:leaf-layer-in 1.2s ease .15s both}
+.leaf-vector-track{opacity:0;animation:leaf-vector-drift var(--leaf-duration) linear var(--leaf-delay) infinite both}
+.leaf-vector-art{overflow:visible;transform-box:fill-box;transform-origin:50% 58%;animation:leaf-vector-flutter var(--leaf-flutter) ease-in-out var(--leaf-delay) infinite alternate}
+@keyframes leaf-layer-in{from{opacity:0}to{opacity:1}}
+@keyframes leaf-vector-drift{0%{opacity:0;transform:translate(0,0)}25%{opacity:var(--leaf-opacity)}35%{transform:translate(var(--leaf-sway),46px)}65%{opacity:var(--leaf-opacity);transform:translate(var(--leaf-drift),86px)}100%{opacity:0;transform:translate(var(--leaf-end),132px)}}
+@keyframes leaf-vector-flutter{from{transform:rotate(var(--leaf-tilt)) scaleX(.79)}to{transform:rotate(var(--leaf-turn)) scaleX(.7)}}
+@media(prefers-reduced-motion:reduce){.leaf-vector-layer{display:none;animation:none}.leaf-vector-track,.leaf-vector-art{animation:none}}
